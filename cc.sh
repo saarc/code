@@ -1,26 +1,14 @@
 #!/bin/bash
 
-cd ~/fabric-samples/basic-network
-./start.sh
+docker exec cli peer chaincode install -n teamate -v 0.9 -p github.com/teamate
 
-docker-compose -f docker-compose.yml up -d cli
-
-docker exec cli peer chaincode install -n sacc -v v1.0 -p github.com/sacc
-
-docker exec cli peer chaincode instantiate -n sacc -v v1.0 -C mychannel -c '{"Args":[]}' -P 'OR ("Org1MSP.member")'
+docker exec cli peer chaincode instantiate -n teamate -v 0.9 -C mychannel -c '{"Args":[]}' -P 'OR("Org1MSP.member")'
 
 sleep 3
 
-docker exec cli peer chaincode invoke -n sacc -C mychannel -c '{"Args":["set","Soomin","100"]}'
+docker exec cli peer chaincode invoke -n teamate  -C mychannel -c '{"Args":["registerUser","user1"]}'
 
 sleep 3
 
-docker exec cli peer chaincode invoke -n sacc -C mychannel -c '{"Args":["set","Sunwoong","1000"]}'
-
-sleep 3
-
-docker exec cli peer chaincode query -n sacc -C mychannel -c '{"Args":["get","Sunwoong"]}'
-
-docker exec cli peer chaincode query -n sacc -C mychannel -c '{"Args":["get","Soomin"]}'
-
+docker exec cli peer chaincode invoke -n teamate  -C mychannel -c '{"Args":["recordScore","user1","project1","5"]}'
 
