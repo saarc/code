@@ -1,0 +1,122 @@
+<!-- 해더부 -->
+<!-- 외부라이브러리 포함
+bootstrap
+jquery
+fontawesome -->
+<head>
+    <!-- Bootstrap include -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+    <!-- fontawsome -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/all.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.9.0/css/v4-shims.css">
+
+    <!-- jquery 버전 유의 -->
+    <!-- slim/jquery, 3.1.0 윗 버전에서 ajax가 작동하지 않는 오류 확인 -->
+    <!-- Bootstrap의 CDN을 copy&paste 하되 Line 8의 버전만 3.1.0으로 수정하세요 -->
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0">
+</head>
+
+<!-- 바디부 -->
+<!-- 제목부
+기능4가지
+1. 메이트추가 - 아이디, 버튼, 메이트추가결과영역
+2. 프로젝트 점수추가 - 아이디, 프로젝트이름, 프로젝트점수, 버튼, 점수추가결과영역
+3. 메이트조회 - 아이디와 버튼, 메이트조회결과 영역 -> 테이블
+4. 메이트이력조회 - 아이디와 버튼, 메이트이력조회 결과영역 -->
+<body>
+    <div class="container">
+        <i class="fas fa-id-card-alt" style="font-size: 150px;color:gainsboro"></i>
+        <h1> TEAMATE<br>프로토타입 </h1>
+        <hr>
+        <!-- 메이트추가 영역 -->
+        <div class="col justify-content-md-center">
+            <div class="row-lg">
+                <!-- 결과알림영역 -->
+                <div id="new-alert"></div>
+                <!-- 사용자 폼영역 -->
+                <h3>새 메이트를 추가합니다</h3>
+                <input type="text" id="new-email" name="email" placeholder="새로 추가할 메이트의 email을 입력하세요"> <br>
+                <!-- 버튼영역 -->
+                <button class="btn btn-primary" id="new-btn">추가하기</button>
+            </div>   
+        
+        <!-- 프로젝트점수추가 영역 -->
+        <!-- 메이트 조회 영역 -->
+            <br><br>
+            <div class="row-lg">
+                <div id="find-alert"></div>
+                <h3>이메일로 메이트를 조회합니다</h3>
+                <input type="text" id="find-email" name="email" placeholder="조회할 mate의 email을 입력하세요"> <br>
+                <button class="btn btn-warning" id="find-btn">조회하기</button>
+                
+                <!-- 테이블 안에 row를 하나씩 붙이는 곳 -->
+                <table class="table">
+                    <tbody id="table">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+// 1. 메이트추가버튼이 눌러졌을때 -> 서버에게 /mate POST id -> 결과로 JSON처리 -> 결과영역 업데이트
+$("#new-btn").click(()=>{
+        // new-email이라는 id값을 가지고 있는 input의 value를 가지고 옴
+        const value = $("#new-email").val();
+        const url = "/mate"
+
+        // email이라는 파라메터에 위의 value를 넣음
+        $.post(url, {id: value}, (data,status)=>{
+            // http 상태 코드가 200(success)이라면
+            if(status == "success"){
+                // 성공했다는 alert창을 띄움
+                //var obj = JSON.parse(data)
+
+                $('#new-alert').append("<div id='success' class='alert alert-success'>추가를 성공했습니다!</div>");
+                $('#new-alert').fadeOut(4000);
+            }
+        })
+    })
+// 2. 프로젝트점수추가버튼이 눌러졌을때 -> /score POST id, pname, score -> 결과로 JSON처리 -> 결과영역 업데이트
+$("#find-btn").click(()=>{
+        const value = $("#find-email").val();
+        const url = "/mate"
+        $.get(url, {id: value}, (data)=>{
+            // 조회했을 때 값이 null이 아니면 (일치하는 값이 존재한다면)
+            if(status != null){
+                $('#find-alert').append("<div id='success' class='alert alert-success'>조회를 성공했습니다!</div>");
+                $('#find-alert').fadeOut(2000);
+
+                // stringify는 json객체를 string으로, parse는 string을 json객체로 변환 시켜줌
+
+                const  parsedData= JSON.parse(data);
+                console.log(parsedData.id);
+
+                $('#table').empty();
+                /*
+                ID                  string  `json:"id"`
+                Avg                 float32 `json:"avg"`
+                NumProject          int     `json:"nproject"`
+                CurrentState        int     `json:"state"`
+                CurrentProject      string  `json:"pname"`
+                CurrentProjectScore int     `json:"pscore"`
+                */
+
+                $('#table').append("<tr><th scope='row'>ID</th><td>" + parsedData.id + "</td></tr>")
+                $('#table').append("<tr><th scope='row'>Avg</th><td>" + parsedData.avg + "</td></tr>")
+                $('#table').append("<tr><th scope='row'>NumProject</th><td>" + parsedData.nproject + "</td></tr>")
+                $('#table').append("<tr><th scope='row'>CurrentProject</th><td>" + parsedData.pname + "</td></tr>")
+                $('#table').append("<tr><th scope='row'>CurrentProjectScore</th><td>" + parsedData.pscore + "</td></tr>")
+                $('#table').append("<tr><th scope='row'>CurrentState</th><td>" + parsedData.state + "</td></tr>")
+            }        
+        })
+    })
+// 3. 메이트조회버튼이 눌러졌을때 -> /mate GET id type=1 -> 결과로 JSON처리 -> 결과영역 업데이트
+// 4. 메이트이력조회버튼이 눌러졌을때 -> /mate GET id type=2 -> 결과로 JSON처리 -> 결과영역 업데이트
+</script>
