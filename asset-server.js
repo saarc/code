@@ -20,15 +20,15 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 // 3 페이지 라우팅
 app.get('/', (req, res)=>{
-    res.sendFile(__dirname + 'views/index.html');
+    res.sendFile(__dirname + '/views/index.html');
 })
 
 app.get('/create', (req, res)=>{
-    res.sendFile(__dirname + 'views/create.html');
+    res.sendFile(__dirname + '/views/create.html');
 })
 
 app.get('/query', (req, res)=>{
-    res.sendFile(__dirname + 'views/query.html');
+    res.sendFile(__dirname + '/views/query.html');
 })
 
 // 4 REST 라우팅 /asset  POST GET
