@@ -1,4 +1,4 @@
-#chaincode insall
+#chaincode install
 docker exec cli peer chaincode install -n papercontract -v 0.9 -p github.com/papercontract
 #chaincode instatiate
 docker exec cli peer chaincode instantiate -n papercontract -v 0.9 -C mychannel -c '{"Args":[]}' -P 'OR ("Org1MSP.member", "Org2MSP.member","Org3MSP.member")'
